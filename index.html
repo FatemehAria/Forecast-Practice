@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+    <style>
+        body{
+            background: url("432527.jpg") no-repeat ;
+            background-size: cover;
+            height: 100vh;
+        }
+        *{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        .container{
+            width: 100%;
+            height: 500px;
+
+        }
+        .search-box{
+            width: 100%;
+            height: 100px;
+            margin: auto;
+            display: flex;
+            justify-content: center;
+        }
+        .input{
+            margin-top: 5px;
+            margin-right: 8px;
+            width: 550px;
+            height: 40px;
+            outline: none;
+            font-size: 27px;
+            background: none;
+            border-bottom: 1px solid #ffffff;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            color: #ffffff;
+        }
+        .search-btn{
+            margin-top: 5px;
+            width: 70px;
+            height: 40px;
+            border: none;
+            border-radius: 2px;
+            overflow: hidden;
+            cursor: pointer;
+            color: #ffffff;
+            background-color: #0b2233;
+            font-size: 16px;
+        }
+        .result{
+            width: 60%;
+            height: 65%;
+            margin-top: 5px;
+            margin-left: auto;
+            margin-right: auto;
+            /* background-color: #82b1a1; */
+            border-radius: 2px;
+            /* background-color: #43566b; */
+            text-align: center;
+            color: #ffffff;
+            line-height: 30px;
+        }
+        p{
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="search-box">
+            <input type="text" class="input">
+            <button class="search-btn" onclick="getData()">Search</button>
+        </div>
+
+        <div class="result"></div>
+    </div>
+    
+    <script>
+        const result = document.querySelector(".result");
+        const inp = document.querySelector(".input");
+
+        function getData(){
+
+            let input = inp.value;
+
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${input}&appid=bd20d14798c81ad1ecb0c2d5be70b497&units=metric`).then(function(response){
+            // data ro gereftim va parse kardim jsonemon ro
+            return response.json();
+            }).then(function(json){
+            // dataye parse shodaro migirim
+
+            let weather = json.weather[0].description;
+            let wind = json.wind.speed;
+            let city_name = json.name;
+            let country = json.sys.country;
+
+            // let main_properties = ["temp", "feels_like" , "temp_min" ,"temp_max " ,"pressure ", "humidity"];
+            // let sys_properties = ["sunrise" , "sunset"];
+            let sunrise = json.sys.sunrise;
+            let riseDate = new Date(sunrise * 1000);
+            let hours = riseDate.getHours();
+            let minutes = "0" + riseDate.getMinutes();
+            let second = "0" + riseDate.getSeconds();
+            let converted_sunrise = hours + ":" + minutes.substr(-2) + ":" + second.substr(-2);
+
+            let sunset = json.sys.sunset;
+            let setDate = new Date(sunset * 1000);
+            let setHours = setDate.getHours();
+            let setMinutes = "0" + setDate.getMinutes();
+            let setSecond = "0" + setDate.getSeconds();
+            let converted_sunset = setHours + ":" + setMinutes.substr(-2) + ":" + setSecond.substr(-2);
+
+            result.innerHTML = `
+                <h1 class ="header" style="color:orange;">${city_name}, ${country}</h1>
+                <h2 class ="header">${json.main.temp} &#8451;</h2>
+                <h3 class ="weather">${json.main.feels_like}&#8451; ${weather}</h3>
+
+                <p class="windPressureHumidity">
+                    Wind Speed : ${wind}m/s SW 
+                    <p>Pressure : ${json.main.pressure}hPa </p> <p>Humidity : ${json.main.humidity}%
+                </p>
+
+                <p class="maxMin"> Minimum Temperature : ${json.main.temp_min}
+                <p> Maximum Temperature : ${json.main.temp_max} </p>
+                </p>
+
+                <p class="riseSet">Sunrise : ${converted_sunrise} 
+                <p> Sunset : ${converted_sunset} </p>
+                </p>
+            `
+            });
+        }
+    </script>
+</body>
+</html>
