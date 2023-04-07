@@ -92,18 +92,12 @@
             let input = inp.value;
 
             fetch(`https://api.openweathermap.org/data/2.5/weather?q=${input}&appid=bd20d14798c81ad1ecb0c2d5be70b497&units=metric`).then(function(response){
-            // data ro gereftim va parse kardim jsonemon ro
             return response.json();
             }).then(function(json){
-            // dataye parse shodaro migirim
-
             let weather = json.weather[0].description;
             let wind = json.wind.speed;
             let city_name = json.name;
             let country = json.sys.country;
-
-            // let main_properties = ["temp", "feels_like" , "temp_min" ,"temp_max " ,"pressure ", "humidity"];
-            // let sys_properties = ["sunrise" , "sunset"];
             let sunrise = json.sys.sunrise;
             let riseDate = new Date(sunrise * 1000);
             let hours = riseDate.getHours();
